@@ -1,9 +1,0 @@
-fastapi
-uvicorn[standard]
-sqlalchemy
-pydantic
-pydantic-settings
-pandas
-numpy
-scikit-learn
-python-multipart
