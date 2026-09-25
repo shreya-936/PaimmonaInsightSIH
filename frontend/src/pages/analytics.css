@@ -1,0 +1,129 @@
+/* PAIMANA INSIGHT - Analytics page */
+.analytics-page {
+  width: 100%;
+}
+
+.analytics-filter-row {
+  justify-content: flex-end;
+}
+
+.analytics-progress-chart {
+  min-height: 280px;
+}
+
+.analytics-comparison {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 24px;
+}
+
+.analytics-comparison-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 58px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.analytics-comparison-row span {
+  color: #647389;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.analytics-comparison-row strong {
+  color: #2a3a50;
+  font-size: 12px;
+  text-align: right;
+}
+
+.analytics-wide-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #edf1f5;
+}
+
+.analytics-wide-track > div {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.25s ease;
+}
+
+.analytics-progress-blue {
+  background: #3d79b6;
+}
+
+.analytics-progress-green {
+  background: #4d9a76;
+}
+
+.analytics-sector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.analytics-sector-row {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr) 55px;
+  align-items: center;
+  gap: 14px;
+}
+
+.analytics-sector-name {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.analytics-sector-name strong {
+  color: #40516a;
+  font-size: 11px;
+}
+
+.analytics-sector-name span {
+  color: #8b98a8;
+  font-size: 9px;
+}
+
+.analytics-sector-bar {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #edf1f5;
+}
+
+.analytics-sector-bar > div {
+  height: 100%;
+  border-radius: inherit;
+  background: #5b82b0;
+  transition: width 0.25s ease;
+}
+
+.analytics-sector-row > strong {
+  color: #394960;
+  font-size: 11px;
+  text-align: right;
+}
+
+.analytics-table strong {
+  color: #354a64;
+}
+
+@media (max-width: 800px) {
+  .analytics-comparison-row {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .analytics-comparison-row strong {
+    text-align: left;
+  }
+
+  .analytics-sector-row {
+    grid-template-columns: 120px minmax(0, 1fr) 45px;
+  }
+}

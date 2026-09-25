@@ -1,650 +1,626 @@
 import {
-  LayoutDashboard,
-  FolderKanban,
-  Bell,
-  BarChart3,
-  Map,
-  Sparkles,
-  SlidersHorizontal,
-  FileText,
-  Settings,
-  Search,
-  RefreshCw,
-  ChevronDown,
   AlertTriangle,
+  ArrowRight,
+  Bot,
+  Building2,
+  CheckCircle2,
+  Clock3,
+  RefreshCw,
+  ShieldCheck,
   TrendingUp,
-  IndianRupee,
-  Activity,
 } from "lucide-react";
 
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-
+import { useEffect, useMemo, useState } from "react";
+import "./dashboard.css";
 import { useNavigate } from "react-router-dom";
 
-const riskTrend = [
-  { month: "Jan", risk: 48 },
-  { month: "Feb", risk: 52 },
-  { month: "Mar", risk: 55 },
-  { month: "Apr", risk: 58 },
-  { month: "May", risk: 61 },
-  { month: "Jun", risk: 59 },
-  { month: "Jul", risk: 64 },
-  { month: "Aug", risk: 61 },
-];
+import {
+  getProjects,
+  getProjectFeatures,
+  getProjectRisk,
+  getProjectAlerts,
+} from "../services/api";
 
-const riskDistribution = [
-  { name: "Low", value: 174 },
-  { name: "Medium", value: 141 },
-  { name: "High", value: 27 },
-];
-
-const projects = [
-  {
-    id: "P1001",
-    name: "National Highway Package A",
-    sector: "Transport",
-    progress: 55,
-    costRisk: 84,
-    delayRisk: 91,
-    priority: 87,
-    status: "High",
-  },
-  {
-    id: "P1002",
-    name: "Regional Water Grid",
-    sector: "Water",
-    progress: 63,
-    costRisk: 38,
-    delayRisk: 44,
-    priority: 41,
-    status: "Low",
-  },
-  {
-    id: "P1003",
-    name: "Urban Power Upgrade",
-    sector: "Power",
-    progress: 47,
-    costRisk: 61,
-    delayRisk: 57,
-    priority: 59,
-    status: "Medium",
-  },
-];
-
-function Sidebar() {
+function Dashboard() {
   const navigate = useNavigate();
 
-  const menu = [
-    [LayoutDashboard, "Dashboard"],
-    [FolderKanban, "Projects"],
-    [Bell, "Risk Alerts"],
-    [BarChart3, "Analytics"],
-    [Map, "Geospatial View"],
-    [SlidersHorizontal, "Scenario Simulator"],
-    [Sparkles, "AI Assistant"],
-    [FileText, "Reports"],
-    [Settings, "Administration"],
-  ];
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [selectedData, setSelectedData] = useState(null);
+  const [portfolioRisk, setPortfolioRisk] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [contextLoading, setContextLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function loadDashboard() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const projectList = (await getProjects()) || [];
+      setProjects(projectList);
+
+      if (projectList.length > 0) {
+        setSelectedProjectId((current) =>
+          current || projectList[0].project_id
+        );
+      }
+
+      const riskEntries = await Promise.all(
+        projectList.map(async (project) => {
+          try {
+            const risk = await getProjectRisk(project.project_id);
+            return [project.project_id, risk];
+          } catch {
+            return [project.project_id, null];
+          }
+        })
+      );
+
+      setPortfolioRisk(Object.fromEntries(riskEntries));
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Unable to load dashboard data.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadSelectedProject(projectId) {
+    if (!projectId) return;
+
+    try {
+      setContextLoading(true);
+
+      const project =
+        projects.find((item) => item.project_id === projectId) || null;
+
+      const [features, risk, alertData] = await Promise.all([
+        getProjectFeatures(projectId),
+        getProjectRisk(projectId),
+        getProjectAlerts(projectId),
+      ]);
+
+      setSelectedData({
+        project,
+        features,
+        risk,
+        alerts: alertData?.alerts || [],
+      });
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Unable to load selected project.");
+    } finally {
+      setContextLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  useEffect(() => {
+    if (projects.length && selectedProjectId) {
+      loadSelectedProject(selectedProjectId);
+    }
+  }, [selectedProjectId, projects]);
+
+  const portfolioSummary = useMemo(() => {
+    const riskValues = Object.values(portfolioRisk).filter(Boolean);
+
+    const highRisk = riskValues.filter(
+      (item) =>
+        Number(item.priority_index ?? item.overall_risk ?? 0) >= 70
+    ).length;
+
+    const mediumRisk = riskValues.filter((item) => {
+      const score = Number(
+        item.priority_index ?? item.overall_risk ?? 0
+      );
+      return score >= 40 && score < 70;
+    }).length;
+
+    const delayed = projects.filter(
+      (project) =>
+        String(project.status || "").toLowerCase() === "delayed"
+    ).length;
+
+    return {
+      total: projects.length,
+      highRisk,
+      mediumRisk,
+      delayed,
+    };
+  }, [projects, portfolioRisk]);
+
+  const summary = useMemo(() => {
+    if (!selectedData) {
+      return {
+        project: null,
+        progress: 0,
+        financial: 0,
+        costOverrun: 0,
+        milestoneCompletion: 0,
+        burnGap: 0,
+        costRisk: 0,
+        delayRisk: 0,
+        implementationRisk: 0,
+        priority: 0,
+        alerts: [],
+      };
+    }
+
+    const { project, features, risk, alerts } = selectedData;
+
+    return {
+      project,
+      progress: Number(
+        features?.physical_progress_pct ??
+          project?.physical_progress ??
+          0
+      ),
+      financial:
+        Number(features?.financial_completion_ratio || 0) * 100,
+      costOverrun:
+        Number(features?.cost_overrun_ratio || 0) * 100,
+      milestoneCompletion:
+        Number(features?.milestone_completion_ratio || 0) * 100,
+      burnGap: Number(features?.burn_vs_progress_gap || 0),
+      costRisk: Number(risk?.cost_risk || 0),
+      delayRisk: Number(risk?.delay_risk || 0),
+      implementationRisk: Number(
+        risk?.implementation_risk || 0
+      ),
+      priority: Number(
+        risk?.priority_index ?? risk?.overall_risk ?? 0
+      ),
+      alerts: alerts || [],
+    };
+  }, [selectedData]);
+
+  const riskLevel =
+    summary.priority >= 80
+      ? "Critical"
+      : summary.priority >= 70
+        ? "High"
+        : summary.priority >= 40
+          ? "Medium"
+          : "Low";
+
+  if (loading) {
+    return (
+      <section className="dashboard-page">
+        <div className="dashboard-loading">
+          <RefreshCw className="spin" size={22} />
+          <span>Loading executive dashboard...</span>
+        </div>
+      </section>
+    );
+  }
+
+  if (error && projects.length === 0) {
+    return (
+      <section className="dashboard-page">
+        <div className="dashboard-error">
+          <AlertTriangle size={24} />
+          <h2>Dashboard data unavailable</h2>
+          <p>{error}</p>
+          <button
+            type="button"
+            onClick={loadDashboard}
+            className="dashboard-primary-button"
+          >
+            <RefreshCw size={15} />
+            Retry
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <aside className="sidebar">
-
-      <div className="sidebar-brand">
-        <div className="brand-icon">
-          <Activity size={22} />
-        </div>
-
+    <section className="dashboard-page">
+      <div className="dashboard-page-header">
         <div>
-          <strong>PAIMANA</strong>
-          <span>INSIGHT</span>
+          <span className="dashboard-eyebrow">
+            EXECUTIVE MONITORING
+          </span>
+          <h1>Infrastructure Risk Overview</h1>
+          <p>
+            Predictive monitoring of cost, schedule and implementation
+            risk across the project portfolio.
+          </p>
+        </div>
+
+        <div className="dashboard-header-actions">
+          <button
+            type="button"
+            className="dashboard-secondary-button"
+            onClick={loadDashboard}
+          >
+            <RefreshCw size={15} />
+            Refresh
+          </button>
+
+          <button
+            type="button"
+            className="dashboard-primary-button"
+            onClick={() => navigate("/projects")}
+          >
+            View Projects
+            <ArrowRight size={15} />
+          </button>
         </div>
       </div>
 
-      <div className="sidebar-section">
-        <span>MONITORING</span>
-      </div>
+      {error && (
+        <div className="dashboard-inline-error">
+          <AlertTriangle size={15} />
+          {error}
+        </div>
+      )}
 
-      <nav>
-
-        {menu.map(([Icon, name], index) => (
-          <button
-            key={name}
-            className={`sidebar-link ${
-              index === 0 ? "active" : ""
-            }`}
-          >
-            <Icon size={18} />
-            <span>{name}</span>
-
-            {name === "Risk Alerts" && (
-              <b className="notification-badge">14</b>
-            )}
-          </button>
-        ))}
-
-      </nav>
-
-      <div className="sidebar-bottom">
-
-        <div className="user-box">
-          <div className="avatar">EA</div>
-
+      <div className="dashboard-kpi-grid">
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon blue">
+            <Building2 size={18} />
+          </div>
           <div>
-            <strong>Executive Analyst</strong>
-            <span>Ministry of Infrastructure</span>
+            <span>Monitored Projects</span>
+            <strong>{portfolioSummary.total}</strong>
+            <small>Projects in current portfolio</small>
           </div>
         </div>
 
-        <button
-          className="logout-button"
-          onClick={() => {
-            localStorage.removeItem("paimana_user");
-            navigate("/login");
-          }}
-        >
-          Sign out
-        </button>
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon red">
+            <AlertTriangle size={18} />
+          </div>
+          <div>
+            <span>High Risk</span>
+            <strong>{portfolioSummary.highRisk}</strong>
+            <small>Priority index ≥ 70</small>
+          </div>
+        </div>
 
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon amber">
+            <Clock3 size={18} />
+          </div>
+          <div>
+            <span>Delayed Projects</span>
+            <strong>{portfolioSummary.delayed}</strong>
+            <small>Latest reported status</small>
+          </div>
+        </div>
+
+        <div className="dashboard-kpi-card">
+          <div className="dashboard-kpi-icon green">
+            <CheckCircle2 size={18} />
+          </div>
+          <div>
+            <span>Medium Risk</span>
+            <strong>{portfolioSummary.mediumRisk}</strong>
+            <small>Priority index 40–69</small>
+          </div>
+        </div>
       </div>
 
-    </aside>
+      <div className="dashboard-project-selector">
+        <div>
+          <span className="dashboard-section-label">
+            FOCUS PROJECT
+          </span>
+          <h2>
+            {summary.project?.name || "No project selected"}
+          </h2>
+          <p>
+            {summary.project?.project_id || "Select a project"}{" "}
+            {summary.project?.sector
+              ? `• ${summary.project.sector}`
+              : ""}
+          </p>
+        </div>
+
+        <select
+          value={selectedProjectId}
+          onChange={(event) =>
+            setSelectedProjectId(event.target.value)
+          }
+          className="dashboard-project-select"
+        >
+          {projects.map((project) => (
+            <option
+              key={project.project_id}
+              value={project.project_id}
+            >
+              {project.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {contextLoading ? (
+        <div className="dashboard-context-loading">
+          <RefreshCw className="spin" size={18} />
+          Updating project intelligence...
+        </div>
+      ) : (
+        <>
+          <div className="dashboard-main-grid">
+            <div className="dashboard-panel">
+              <div className="dashboard-panel-header">
+                <div>
+                  <span>PROJECT RISK PROFILE</span>
+                  <h3>Current Risk Assessment</h3>
+                </div>
+                <span className={`dashboard-risk-badge ${riskLevel.toLowerCase()}`}>
+                  {riskLevel}
+                </span>
+              </div>
+
+              <div className="dashboard-risk-grid">
+                <RiskRow
+                  label="Cost Risk"
+                  value={summary.costRisk}
+                />
+                <RiskRow
+                  label="Delay Risk"
+                  value={summary.delayRisk}
+                />
+                <RiskRow
+                  label="Implementation Risk"
+                  value={summary.implementationRisk}
+                />
+              </div>
+
+              <div className="dashboard-priority-card">
+                <div>
+                  <span>Priority Index</span>
+                  <strong>
+                    {summary.priority.toFixed(1)}
+                    <small>/100</small>
+                  </strong>
+                </div>
+                <div className="dashboard-priority-track">
+                  <div
+                    style={{
+                      width: `${Math.min(
+                        100,
+                        Math.max(0, summary.priority)
+                      )}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="dashboard-panel">
+              <div className="dashboard-panel-header">
+                <div>
+                  <span>PROJECT INDICATORS</span>
+                  <h3>Current Performance</h3>
+                </div>
+              </div>
+
+              <Indicator
+                label="Physical Progress"
+                value={`${summary.progress.toFixed(1)}%`}
+              />
+              <Indicator
+                label="Financial Completion"
+                value={`${summary.financial.toFixed(1)}%`}
+              />
+              <Indicator
+                label="Cost Overrun"
+                value={`${summary.costOverrun.toFixed(1)}%`}
+              />
+              <Indicator
+                label="Milestone Completion"
+                value={`${summary.milestoneCompletion.toFixed(1)}%`}
+              />
+              <Indicator
+                label="Burn vs Progress Gap"
+                value={`${summary.burnGap.toFixed(2)} pp`}
+              />
+
+              <div className="dashboard-last-update">
+                Latest update:{" "}
+                {selectedData?.features?.latest_update || "—"}
+              </div>
+            </div>
+          </div>
+
+          <div className="dashboard-secondary-grid">
+            <div className="dashboard-panel">
+              <div className="dashboard-panel-header">
+                <div>
+                  <span>PROGRESS MONITORING</span>
+                  <h3>Physical vs Financial Progress</h3>
+                </div>
+              </div>
+
+              <ProgressRow
+                label="Physical Progress"
+                value={summary.progress}
+              />
+
+              <ProgressRow
+                label="Financial Completion"
+                value={summary.financial}
+              />
+
+              <div className="dashboard-gap-note">
+                <TrendingUp size={15} />
+                Financial completion is{" "}
+                {summary.burnGap >= 0 ? "ahead of" : "behind"} physical
+                progress by{" "}
+                <strong>
+                  {Math.abs(summary.burnGap).toFixed(2)} percentage points
+                </strong>
+                .
+              </div>
+            </div>
+
+            <div className="dashboard-panel">
+              <div className="dashboard-panel-header">
+                <div>
+                  <span>EARLY WARNINGS</span>
+                  <h3>Active Alerts</h3>
+                </div>
+
+                <button
+                  type="button"
+                  className="dashboard-link-button"
+                  onClick={() => navigate("/risk-alerts")}
+                >
+                  View all
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+
+              {summary.alerts.length === 0 ? (
+                <div className="dashboard-empty">
+                  <ShieldCheck size={22} />
+                  <span>No active alerts for this project.</span>
+                </div>
+              ) : (
+                <div className="dashboard-alert-list">
+                  {summary.alerts.slice(0, 4).map((alert, index) => (
+                    <div
+                      className="dashboard-alert-item"
+                      key={`${alert.type}-${index}`}
+                    >
+                      <div className="dashboard-alert-icon">
+                        <AlertTriangle size={15} />
+                      </div>
+                      <div>
+                        <strong>{alert.type}</strong>
+                        <p>{alert.message}</p>
+                        {alert.reason && (
+                          <small>{alert.reason}</small>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="dashboard-ai-strip">
+            <div className="dashboard-ai-icon">
+              <Bot size={20} />
+            </div>
+            <div>
+              <span>PAIMANA INSIGHT AI ASSISTANT</span>
+              <h3>Understand why this project requires attention</h3>
+              <p>
+                Ask about current risk drivers, recent changes, progress,
+                cost position and alerts using the selected project's
+                monitoring data.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/ai-assistant")}
+              className="dashboard-primary-button"
+            >
+              Open AI Assistant
+              <ArrowRight size={15} />
+            </button>
+          </div>
+
+          <div className="dashboard-quick-grid">
+            <QuickAction
+              title="Project Register"
+              text="Review all monitored projects."
+              onClick={() => navigate("/projects")}
+            />
+            <QuickAction
+              title="Risk Alerts"
+              text="Review early-warning events."
+              onClick={() => navigate("/risk-alerts")}
+            />
+            <QuickAction
+              title="Analytics"
+              text="Explore portfolio indicators."
+              onClick={() => navigate("/analytics")}
+            />
+            <QuickAction
+              title="Scenario Simulator"
+              text="Test controlled what-if assumptions."
+              onClick={() => navigate("/scenario-simulator")}
+            />
+          </div>
+        </>
+      )}
+    </section>
   );
 }
 
-function Dashboard() {
+function RiskRow({ label, value }) {
+  const score = Math.max(0, Math.min(100, Number(value) || 0));
+  const level =
+    score >= 70 ? "high" : score >= 40 ? "medium" : "low";
+
   return (
-    <div className="app-layout">
-
-      <Sidebar />
-
-      <main className="main-content">
-
-        {/* TOP BAR */}
-
-        <header className="topbar">
-
-          <div className="search-box">
-            <Search size={18} />
-
-            <input
-              placeholder="Search projects, ministries, sectors..."
-            />
-          </div>
-
-          <div className="topbar-actions">
-
-            <button className="icon-button">
-              <Bell size={20} />
-
-              <span className="bell-dot"></span>
-            </button>
-
-            <button className="profile-button">
-              <div className="avatar small">EA</div>
-
-              <div>
-                <strong>Executive</strong>
-                <span>Administrator</span>
-              </div>
-
-              <ChevronDown size={16} />
-            </button>
-
-          </div>
-
-        </header>
-
-        {/* PAGE HEADER */}
-
-        <section className="page-header">
-
-          <div>
-            <span className="page-label">
-              PAIMANA / EXECUTIVE OVERVIEW
-            </span>
-
-            <h1>Executive Dashboard</h1>
-
-            <p>
-              Predictive monitoring for a stronger, more resilient
-              infrastructure future.
-            </p>
-          </div>
-
-          <div className="header-actions">
-
-            <button className="secondary-button">
-              <RefreshCw size={16} />
-              Refresh Data
-            </button>
-
-            <button className="primary-button">
-              Export Report
-            </button>
-
-          </div>
-
-        </section>
-
-        {/* FILTERS */}
-
-        <section className="filter-bar">
-
-          <button>
-            Ministry: All
-            <ChevronDown size={15} />
-          </button>
-
-          <button>
-            Sector: All
-            <ChevronDown size={15} />
-          </button>
-
-          <button>
-            Region: All India
-            <ChevronDown size={15} />
-          </button>
-
-          <button>
-            Last 12 Months
-            <ChevronDown size={15} />
-          </button>
-
-        </section>
-
-        {/* KPI CARDS */}
-
-        <section className="kpi-grid">
-
-          <div className="kpi-card">
-
-            <div className="kpi-icon blue">
-              <FolderKanban size={21} />
-            </div>
-
-            <div>
-              <span>Total Projects</span>
-              <strong>342</strong>
-              <small>↑ 8.4% from last month</small>
-            </div>
-
-          </div>
-
-          <div className="kpi-card">
-
-            <div className="kpi-icon red">
-              <AlertTriangle size={21} />
-            </div>
-
-            <div>
-              <span>High Risk</span>
-              <strong>27</strong>
-              <small>7.9% of portfolio</small>
-            </div>
-
-          </div>
-
-          <div className="kpi-card">
-
-            <div className="kpi-icon orange">
-              <TrendingUp size={21} />
-            </div>
-
-            <div>
-              <span>Average Risk Index</span>
-              <strong>61</strong>
-              <small>↑ 4.2% this month</small>
-            </div>
-
-          </div>
-
-          <div className="kpi-card">
-
-            <div className="kpi-icon green">
-              <IndianRupee size={21} />
-            </div>
-
-            <div>
-              <span>Project Value</span>
-              <strong>₹8,420 Cr</strong>
-              <small>Portfolio under monitoring</small>
-            </div>
-
-          </div>
-
-          <div className="kpi-card">
-
-            <div className="kpi-icon purple">
-              <Bell size={21} />
-            </div>
-
-            <div>
-              <span>New Warnings</span>
-              <strong>14</strong>
-              <small>Last 30 days</small>
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* CHART ROW */}
-
-        <section className="dashboard-grid">
-
-          {/* RISK DISTRIBUTION */}
-
-          <div className="dashboard-card">
-
-            <div className="card-header">
-              <div>
-                <h3>Risk Distribution</h3>
-                <span>Current portfolio</span>
-              </div>
-
-              <button>View details</button>
-            </div>
-
-            <div className="donut-container">
-
-              <ResponsiveContainer width="55%" height={220}>
-
-                <PieChart>
-
-                  <Pie
-                    data={riskDistribution}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={65}
-                    outerRadius={90}
-                    paddingAngle={3}
-                  >
-
-                    <Cell fill="#16a085" />
-                    <Cell fill="#f39c12" />
-                    <Cell fill="#e74c3c" />
-
-                  </Pie>
-
-                </PieChart>
-
-              </ResponsiveContainer>
-
-              <div className="risk-legend">
-
-                <div>
-                  <i className="green-dot"></i>
-                  <span>Low</span>
-                  <strong>174</strong>
-                </div>
-
-                <div>
-                  <i className="orange-dot"></i>
-                  <span>Medium</span>
-                  <strong>141</strong>
-                </div>
-
-                <div>
-                  <i className="red-dot"></i>
-                  <span>High</span>
-                  <strong>27</strong>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* RISK TREND */}
-
-          <div className="dashboard-card trend-card">
-
-            <div className="card-header">
-
-              <div>
-                <h3>Portfolio Risk Trend</h3>
-                <span>Average priority index</span>
-              </div>
-
-              <button>Last 8 months</button>
-
-            </div>
-
-            <ResponsiveContainer width="100%" height={220}>
-
-              <AreaChart data={riskTrend}>
-
-                <XAxis
-                  dataKey="month"
-                  axisLine={false}
-                  tickLine={false}
-                />
-
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  domain={[40, 70]}
-                />
-
-                <Tooltip />
-
-                <Area
-                  type="monotone"
-                  dataKey="risk"
-                  stroke="#1769aa"
-                  fill="#dceeff"
-                  strokeWidth={3}
-                />
-
-              </AreaChart>
-
-            </ResponsiveContainer>
-
-          </div>
-
-        </section>
-
-        {/* PROJECTS + ALERTS */}
-
-        <section className="bottom-grid">
-
-          {/* PROJECT TABLE */}
-
-          <div className="dashboard-card projects-card">
-
-            <div className="card-header">
-
-              <div>
-                <h3>Project Risk Monitor</h3>
-                <span>Projects requiring attention</span>
-              </div>
-
-              <button>View all projects →</button>
-
-            </div>
-
-            <div className="table-container">
-
-              <table>
-
-                <thead>
-
-                  <tr>
-                    <th>Project</th>
-                    <th>Sector</th>
-                    <th>Progress</th>
-                    <th>Cost Risk</th>
-                    <th>Delay Risk</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                  </tr>
-
-                </thead>
-
-                <tbody>
-
-                  {projects.map((project) => (
-
-                    <tr key={project.id}>
-
-                      <td>
-                        <div className="project-name">
-                          <strong>{project.id}</strong>
-                          <span>{project.name}</span>
-                        </div>
-                      </td>
-
-                      <td>{project.sector}</td>
-
-                      <td>
-                        <div className="progress-wrapper">
-
-                          <div className="progress-bar">
-                            <span
-                              style={{
-                                width: `${project.progress}%`,
-                              }}
-                            ></span>
-                          </div>
-
-                          <small>
-                            {project.progress}%
-                          </small>
-
-                        </div>
-                      </td>
-
-                      <td>
-                        <span className={`risk-pill ${
-                          project.costRisk >= 70
-                            ? "high"
-                            : project.costRisk >= 50
-                            ? "medium"
-                            : "low"
-                        }`}>
-                          {project.costRisk}%
-                        </span>
-                      </td>
-
-                      <td>
-                        <span className={`risk-pill ${
-                          project.delayRisk >= 70
-                            ? "high"
-                            : project.delayRisk >= 50
-                            ? "medium"
-                            : "low"
-                        }`}>
-                          {project.delayRisk}%
-                        </span>
-                      </td>
-
-                      <td>
-                        <strong>{project.priority}</strong>
-                      </td>
-
-                      <td>
-                        <span className={`status ${project.status.toLowerCase()}`}>
-                          {project.status}
-                        </span>
-                      </td>
-
-                    </tr>
-
-                  ))}
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-          {/* ALERTS */}
-
-          <div className="dashboard-card alerts-card">
-
-            <div className="card-header">
-
-              <div>
-                <h3>Latest Alerts</h3>
-                <span>Early warning signals</span>
-              </div>
-
-              <button>View all</button>
-
-            </div>
-
-            <div className="alert-list">
-
-              <div className="alert-item">
-
-                <div className="alert-icon red">
-                  <AlertTriangle size={17} />
-                </div>
-
-                <div>
-                  <strong>Cost risk crossed threshold</strong>
-                  <span>
-                    P1001 · National Highway Package A
-                  </span>
-                  <small>18 minutes ago</small>
-                </div>
-
-              </div>
-
-              <div className="alert-item">
-
-                <div className="alert-icon orange">
-                  <TrendingUp size={17} />
-                </div>
-
-                <div>
-                  <strong>Progress deterioration detected</strong>
-                  <span>
-                    P1003 · Urban Power Upgrade
-                  </span>
-                  <small>42 minutes ago</small>
-                </div>
-
-              </div>
-
-              <div className="alert-item">
-
-                <div className="alert-icon yellow">
-                  <Activity size={17} />
-                </div>
-
-                <div>
-                  <strong>Milestone slippage risk</strong>
-                  <span>
-                    P1002 · Regional Water Grid
-                  </span>
-                  <small>1 hour ago</small>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-      </main>
-
+    <div className="dashboard-risk-row">
+      <div className="dashboard-risk-row-top">
+        <span>{label}</span>
+        <strong>{score.toFixed(0)}/100</strong>
+      </div>
+      <div className="dashboard-risk-track">
+        <div
+          className={level}
+          style={{ width: `${score}%` }}
+        />
+      </div>
     </div>
+  );
+}
+
+function Indicator({ label, value }) {
+  return (
+    <div className="dashboard-indicator">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function ProgressRow({ label, value }) {
+  const safeValue = Math.max(
+    0,
+    Math.min(100, Number(value) || 0)
+  );
+
+  return (
+    <div className="dashboard-progress-row">
+      <div>
+        <span>{label}</span>
+        <strong>{safeValue.toFixed(1)}%</strong>
+      </div>
+      <div className="dashboard-progress-track">
+        <div style={{ width: `${safeValue}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function QuickAction({ title, text, onClick }) {
+  return (
+    <button
+      type="button"
+      className="dashboard-quick-card"
+      onClick={onClick}
+    >
+      <div>
+        <strong>{title}</strong>
+        <span>{text}</span>
+      </div>
+      <ArrowRight size={16} />
+    </button>
   );
 }
 

@@ -1,0 +1,60 @@
+/* PAIMANA INSIGHT - Scenario Simulator page */
+.scenario-page {
+  width: 100%;
+}
+
+.scenario-page .dashboard-card {
+  min-height: 100%;
+}
+
+.scenario-page .card-header > svg {
+  color: #5d7898;
+}
+
+.scenario-control input[type="range"] {
+  cursor: pointer;
+}
+
+.scenario-control input[type="range"]:focus {
+  outline: none;
+}
+
+.scenario-explanation {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.scenario-result-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.scenario-risk-comparison {
+  padding: 6px 0;
+}
+
+.scenario-risk-row {
+  min-height: 35px;
+}
+
+.scenario-risk-track {
+  width: 100%;
+}
+
+.scenario-risk-track div {
+  transition: width 0.25s ease;
+}
+
+@media (max-width: 800px) {
+  .scenario-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .scenario-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scenario-risk-row {
+    grid-template-columns: 100px minmax(0, 1fr) 75px;
+  }
+}

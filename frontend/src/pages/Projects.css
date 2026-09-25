@@ -1,0 +1,1043 @@
+/* =========================================================
+   PAIMANA INSIGHT
+   PROJECTS PAGE
+   ========================================================= */
+
+.projects-page {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.projects-page .page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.projects-page .page-eyebrow {
+  margin-bottom: 7px;
+
+  color: #4779a6;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.projects-page .page-header h2 {
+  margin: 0;
+
+  color: #1c314b;
+
+  font-size: 25px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.projects-page .page-header p {
+  margin: 8px 0 0;
+
+  color: #718095;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.projects-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.projects-page .primary-button,
+.projects-page .secondary-button {
+  min-height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 15px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.projects-page .primary-button {
+  border: 1px solid #2868d7;
+
+  background: #2f6fed;
+  color: #ffffff;
+
+  box-shadow: 0 5px 12px rgba(47, 111, 237, 0.16);
+}
+
+.projects-page .primary-button:hover {
+  background: #2564dc;
+  box-shadow: 0 7px 16px rgba(47, 111, 237, 0.22);
+}
+
+.projects-page .secondary-button {
+  border: 1px solid #d9e1ea;
+
+  background: #ffffff;
+  color: #52647a;
+}
+
+.projects-page .secondary-button:hover {
+  background: #f7f9fc;
+  border-color: #c7d3df;
+}
+
+.projects-page button:active {
+  transform: translateY(1px);
+}
+
+.projects-page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ERROR / STATUS
+   ========================================================= */
+
+.projects-page .status-banner {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 16px;
+  padding: 12px 14px;
+
+  border-radius: 8px;
+
+  font-size: 11px;
+}
+
+.projects-page .status-banner.status-error {
+  border: 1px solid #efcccc;
+
+  background: #fff5f5;
+  color: #a64141;
+}
+
+.projects-page .status-banner div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.projects-page .status-banner strong {
+  font-size: 11px;
+}
+
+.projects-page .status-banner span {
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.portfolio-summary-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 20px;
+}
+
+.portfolio-summary-card {
+  min-height: 94px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 15px 16px;
+
+  border: 1px solid #e1e7ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  box-shadow: 0 2px 8px rgba(29, 53, 78, 0.025);
+}
+
+.portfolio-summary-icon {
+  width: 39px;
+  height: 39px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+}
+
+.portfolio-summary-icon.blue {
+  background: #edf4ff;
+  color: #3972b4;
+}
+
+.portfolio-summary-icon.red {
+  background: #fff0f0;
+  color: #c65353;
+}
+
+.portfolio-summary-icon.orange {
+  background: #fff7e8;
+  color: #b67b27;
+}
+
+.portfolio-summary-icon.green {
+  background: #edf8f2;
+  color: #32825c;
+}
+
+.portfolio-summary-card span {
+  display: block;
+
+  color: #8492a4;
+
+  font-size: 10px;
+}
+
+.portfolio-summary-card strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #24374f;
+
+  font-size: 22px;
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.projects-page .project-toolbar,
+.projects-page .projects-toolbar {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  margin-bottom: 17px;
+  padding: 13px;
+
+  border: 1px solid #e0e6ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.projects-page .search-box {
+  position: relative;
+
+  flex: 1;
+  min-width: 200px;
+}
+
+.projects-page .search-box svg {
+  position: absolute;
+
+  top: 50%;
+  left: 12px;
+
+  color: #8a98aa;
+
+  transform: translateY(-50%);
+}
+
+.projects-page .search-box input {
+  width: 100%;
+  height: 38px;
+
+  box-sizing: border-box;
+
+  padding: 0 12px 0 37px;
+
+  border: 1px solid #dfe5ed;
+  border-radius: 7px;
+
+  outline: none;
+
+  color: #35455b;
+  background: #fafbfd;
+
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.projects-page .search-box input:focus {
+  border-color: #8db0e3;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(47, 111, 237, 0.07);
+}
+
+.projects-page .filter-select {
+  height: 38px;
+  min-width: 145px;
+
+  padding: 0 30px 0 11px;
+
+  border: 1px solid #dfe5ed;
+  border-radius: 7px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #56667b;
+
+  font-family: inherit;
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   PORTFOLIO HEADER
+   ========================================================= */
+
+.portfolio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+}
+
+.portfolio-header h3,
+.projects-page .section-title {
+  margin: 0;
+
+  color: #263a53;
+
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.portfolio-header span {
+  color: #8b98a8;
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   PROJECT TABLE
+   ========================================================= */
+
+.projects-table-wrapper,
+.project-table-wrapper {
+  overflow-x: auto;
+
+  border: 1px solid #e1e7ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.projects-table,
+.project-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 11px;
+}
+
+.projects-table th,
+.project-table th {
+  padding: 11px 12px;
+
+  border-bottom: 1px solid #e2e7ee;
+
+  background: #fafbfd;
+
+  color: #8390a2;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.projects-table td,
+.project-table td {
+  padding: 14px 12px;
+
+  border-bottom: 1px solid #edf0f4;
+
+  color: #5d6b7e;
+
+  vertical-align: middle;
+}
+
+.projects-table tbody tr:last-child td,
+.project-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.projects-table tbody tr:hover,
+.project-table tbody tr:hover {
+  background: #f8faff;
+}
+
+
+/* =========================================================
+   PROJECT NAME
+   ========================================================= */
+
+.project-table-name {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 210px;
+}
+
+.project-table-icon {
+  width: 31px;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: #edf4ff;
+  color: #3972b4;
+}
+
+.project-table-name strong {
+  display: block;
+
+  color: #293b52;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.project-table-name span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #97a2b0;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   SECTOR / AGENCY
+   ========================================================= */
+
+.sector-tag {
+  display: inline-flex !important;
+
+  padding: 4px 7px;
+
+  border-radius: 4px;
+
+  background: #eef4fb;
+
+  color: #47749c !important;
+
+  font-size: 9px !important;
+  font-weight: 700;
+}
+
+.agency-cell strong {
+  display: block;
+
+  color: #34485f;
+
+  font-size: 10px;
+}
+
+.agency-cell span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #96a2b0;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.table-progress {
+  min-width: 115px;
+}
+
+.table-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 6px;
+
+  font-size: 9px;
+}
+
+.table-progress-header span {
+  color: #8d99a8;
+}
+
+.table-progress-header strong {
+  color: #40556d;
+
+  font-size: 9px;
+}
+
+.table-progress-track {
+  width: 100%;
+  height: 6px;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: #edf1f5;
+}
+
+.table-progress-fill {
+  height: 100%;
+
+  border-radius: 10px;
+
+  background: #4d83b8;
+}
+
+
+/* =========================================================
+   COST
+   ========================================================= */
+
+.cost-cell strong {
+  display: block;
+
+  color: #344960;
+
+  font-size: 11px;
+}
+
+.cost-cell span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #98a3b0;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   RISK
+   ========================================================= */
+
+.table-risk strong {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.table-risk span {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 9px;
+}
+
+.risk-high {
+  color: #c45151;
+}
+
+.risk-medium {
+  color: #b77c24;
+}
+
+.risk-low {
+  color: #32835d;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status-pill {
+  display: inline-flex !important;
+  align-items: center;
+
+  gap: 4px;
+
+  padding: 4px 7px;
+
+  border-radius: 4px;
+
+  font-size: 8px !important;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.status-pill.status-delayed {
+  background: #fff0f0;
+  color: #c45151;
+}
+
+.status-pill.status-watch {
+  background: #fff8e9;
+  color: #b77c24;
+}
+
+.status-pill.status-track {
+  background: #edf8f2;
+  color: #32835d;
+}
+
+
+/* =========================================================
+   ACTION
+   ========================================================= */
+
+.table-action-button {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #dce4ed;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #73849a;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.table-action-button:hover {
+  background: #f1f6fb;
+  border-color: #bfd0df;
+  color: #2f6697;
+}
+
+
+/* =========================================================
+   RECORD COUNT
+   ========================================================= */
+
+.project-record-count {
+  display: inline-flex;
+
+  padding: 6px 9px;
+
+  border: 1px solid #dfe6ee;
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #6f7f92;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ADD PROJECT MODAL
+   ========================================================= */
+
+.project-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(17, 37, 59, 0.48);
+
+  backdrop-filter: blur(3px);
+
+  animation: projectModalFadeIn 0.18s ease;
+}
+
+.project-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 48px);
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border: 1px solid #dbe3ec;
+  border-radius: 12px;
+
+  box-shadow:
+    0 24px 70px rgba(20, 43, 70, 0.22),
+    0 4px 18px rgba(20, 43, 70, 0.08);
+
+  animation: projectModalSlideIn 0.2s ease;
+}
+
+.project-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 24px 26px 20px;
+
+  border-bottom: 1px solid #e8edf3;
+}
+
+.project-modal-header > div:first-child {
+  min-width: 0;
+}
+
+.project-modal-header > div:first-child > span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #4779a6;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.project-modal-header h2 {
+  margin: 0;
+
+  color: #1d344f;
+
+  font-size: 21px;
+  font-weight: 750;
+}
+
+.project-modal-header p {
+  margin: 7px 0 0;
+
+  color: #718095;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.project-modal-close {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #dce4ec;
+  border-radius: 7px;
+
+  background: #f8fafc;
+  color: #65758a;
+
+  cursor: pointer;
+}
+
+.project-modal-close:hover {
+  background: #edf3f8;
+  border-color: #c9d6e3;
+  color: #1d4e78;
+}
+
+
+/* =========================================================
+   PROJECT FORM
+   ========================================================= */
+
+.project-form {
+  padding: 24px 26px 26px;
+}
+
+.project-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 18px 20px;
+}
+
+.project-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-form-field label {
+  margin-bottom: 7px;
+
+  color: #40536a;
+
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.project-form-field input,
+.project-form-field select {
+  width: 100%;
+  height: 40px;
+
+  box-sizing: border-box;
+
+  padding: 0 11px;
+
+  border: 1px solid #d5dee8;
+  border-radius: 6px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #263b53;
+
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.project-form-field input:focus,
+.project-form-field select:focus {
+  border-color: #4b7da8;
+
+  box-shadow:
+    0 0 0 3px rgba(75, 125, 168, 0.11);
+}
+
+.project-form-message {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 20px;
+  padding: 11px 13px;
+
+  border-radius: 7px;
+
+  font-size: 10px;
+}
+
+.project-form-message.error {
+  border: 1px solid #f0caca;
+
+  background: #fff5f5;
+  color: #a63f3f;
+}
+
+.project-form-message.success {
+  border: 1px solid #c8e5d5;
+
+  background: #f1faf5;
+  color: #2e7650;
+}
+
+.project-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 24px;
+  padding-top: 20px;
+
+  border-top: 1px solid #e8edf3;
+}
+
+
+/* =========================================================
+   MODAL SCROLLBAR
+   ========================================================= */
+
+.project-modal::-webkit-scrollbar {
+  width: 7px;
+}
+
+.project-modal::-webkit-scrollbar-track {
+  background: #f7f9fb;
+}
+
+.project-modal::-webkit-scrollbar-thumb {
+  background: #cbd5df;
+
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
+
+@keyframes projectModalFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes projectModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .portfolio-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projects-page .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .projects-header-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .project-modal-overlay {
+    padding: 12px;
+  }
+
+  .project-modal {
+    max-height: calc(100vh - 24px);
+  }
+
+  .project-modal-header,
+  .project-form {
+    padding: 20px;
+  }
+
+  .project-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-form-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .project-form-footer button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .portfolio-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .projects-header-actions button {
+    width: 100%;
+  }
+}

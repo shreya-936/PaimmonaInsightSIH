@@ -1,209 +1,470 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ShieldCheck, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  LockKeyhole,
+  ShieldCheck,
+  TrendingUp,
+  User,
+} from "lucide-react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  useState,
+} from "react";
+
 
 function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState(
+    "Executive"
+  );
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const [username, setUsername] =
+    useState("");
 
-    // Demo login for prototype
-    localStorage.setItem("paimana_user", email || "admin@paimana.gov.in");
+  const [password, setPassword] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
+
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    setError("");
+
+    /*
+     * Demo authentication for the prototype.
+     * Backend authentication can be connected later.
+     */
+
+    if (!username.trim()) {
+      setError(
+        "Please enter your username."
+      );
+      return;
+    }
+
+    if (!password.trim()) {
+      setError(
+        "Please enter your password."
+      );
+      return;
+    }
+
+    localStorage.setItem(
+      "paimana_user",
+      JSON.stringify({
+        username: username.trim(),
+        role,
+      })
+    );
 
     navigate("/dashboard");
-  };
+  }
 
-  const demoLogin = (role) => {
-    const accounts = {
-      Executive: "executive@paimana.gov.in",
-      Analyst: "analyst@paimana.gov.in",
-      Officer: "officer@paimana.gov.in",
-    };
 
-    localStorage.setItem("paimana_user", accounts[role]);
+  function handleDemoLogin() {
+    localStorage.setItem(
+      "paimana_user",
+      JSON.stringify({
+        username: "demo.admin",
+        role,
+      })
+    );
 
     navigate("/dashboard");
-  };
+  }
+
 
   return (
     <div className="login-page">
 
-      {/* Left visual section */}
-      <div className="login-visual">
+      {/* =================================================
+          LEFT — BRAND / PRODUCT INTRO
+          ================================================= */}
 
-        <div className="login-brand">
-          <div className="brand-symbol">
-            <ShieldCheck size={30} />
+      <section className="login-left">
+
+        <div>
+
+          {/* BRAND */}
+
+          <div className="login-brand">
+
+            <div className="login-brand-logo">
+              P
+            </div>
+
+            <div className="login-brand-text">
+
+              <strong>
+                PAIMANA
+              </strong>
+
+              <span>
+                INSIGHT
+              </span>
+
+            </div>
+
           </div>
 
-          <div>
-            <h2>PAIMANA</h2>
-            <span>INSIGHT</span>
-          </div>
-        </div>
 
-        <div className="login-hero-content">
-          <span className="eyebrow">
-            PREDICTIVE INFRASTRUCTURE MONITORING
-          </span>
+          {/* HERO */}
 
           <h1>
-            From Data
+            Predict risk.
             <br />
-            to <span>Decisions.</span>
+            Prevent delays.
+            <br />
+            <span>
+              Improve outcomes.
+            </span>
           </h1>
 
+
           <p>
-            Predict project risks, understand emerging issues and
-            help decision-makers act before problems escalate.
+            A predictive decision-support
+            platform for monitoring
+            infrastructure projects,
+            identifying emerging risks,
+            and supporting timely
+            intervention.
           </p>
 
-          <div className="login-stats">
-            <div>
-              <strong>342+</strong>
-              <span>Projects Monitored</span>
+
+          {/* FEATURES */}
+
+          <div className="login-feature-grid">
+
+            <div className="login-feature">
+
+              <TrendingUp size={20} />
+
+              <strong>
+                Predictive Risk
+              </strong>
+
+              <span>
+                Identify cost and delay
+                risks early.
+              </span>
+
             </div>
 
-            <div>
-              <strong>24/7</strong>
-              <span>Risk Monitoring</span>
+
+            <div className="login-feature">
+
+              <BarChart3 size={20} />
+
+              <strong>
+                Explainable AI
+              </strong>
+
+              <span>
+                Understand what drives
+                project risk.
+              </span>
+
             </div>
 
-            <div>
-              <strong>AI</strong>
-              <span>Decision Support</span>
+
+            <div className="login-feature">
+
+              <ShieldCheck size={20} />
+
+              <strong>
+                Human Oversight
+              </strong>
+
+              <span>
+                Keep decisions with
+                authorized officers.
+              </span>
+
             </div>
+
           </div>
+
+
+          {/* FOOTER NOTE */}
+
+          <div
+            style={{
+              marginTop: "25px",
+              color: "#8a98a9",
+              fontSize: "9px",
+              lineHeight: "1.5",
+            }}
+          >
+            Government infrastructure
+            monitoring • Decision support
+            system
+          </div>
+
         </div>
 
-        <div className="login-footer">
-          <span>Infrastructure for a Better Tomorrow</span>
-          <span>Government Decision Support Platform</span>
-        </div>
+      </section>
 
-      </div>
 
-      {/* Login form */}
-      <div className="login-form-section">
+      {/* =================================================
+          RIGHT — LOGIN CARD
+          ================================================= */}
+
+      <section className="login-right">
 
         <div className="login-card">
 
-          <div className="mobile-brand">
-            <div className="brand-symbol">
-              <ShieldCheck size={26} />
-            </div>
+          <h2>
+            Welcome back
+          </h2>
 
-            <div>
-              <h2>PAIMANA</h2>
-              <span>INSIGHT</span>
-            </div>
-          </div>
+          <p>
+            Sign in to access the
+            PAIMANA INSIGHT monitoring
+            platform.
+          </p>
 
-          <div className="login-heading">
-            <span className="small-label">SECURE ACCESS</span>
 
-            <h1>Welcome Back</h1>
+          <form
+            onSubmit={handleSubmit}
+          >
 
-            <p>
-              Sign in to access the PAIMANA INSIGHT monitoring platform.
-            </p>
-          </div>
+            {/* USERNAME */}
 
-          <form onSubmit={handleLogin}>
+            <div className="login-field">
 
-            <div className="form-group">
-              <label>Email / User ID</label>
+              <label htmlFor="username">
+                Username
+              </label>
 
-              <input
-                type="text"
-                placeholder="Enter your email or user ID"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+              <div className="login-input">
 
-            <div className="form-group">
-              <div className="password-label">
-                <label>Password</label>
+                <User size={16} />
 
-                <button
-                  type="button"
-                  className="forgot-button"
-                  onClick={() => alert("Demo prototype")}
-                >
-                  Forgot password?
-                </button>
-              </div>
-
-              <div className="password-input">
                 <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(event) =>
+                    setUsername(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Enter your username"
+                  autoComplete="username"
                 />
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
               </div>
+
             </div>
 
-            <button className="login-button" type="submit">
-              Sign In
 
-              <ArrowRight size={19} />
+            {/* PASSWORD */}
+
+            <div className="login-field">
+
+              <label htmlFor="password">
+                Password
+              </label>
+
+              <div className="login-input">
+
+                <LockKeyhole size={16} />
+
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) =>
+                    setPassword(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                />
+
+              </div>
+
+            </div>
+
+
+            {/* ROLE */}
+
+            <div className="login-field">
+
+              <label htmlFor="role">
+                Access Role
+              </label>
+
+              <div className="login-input">
+
+                <ShieldCheck size={16} />
+
+                <select
+                  id="role"
+                  value={role}
+                  onChange={(event) =>
+                    setRole(
+                      event.target.value
+                    )
+                  }
+                >
+
+                  <option value="Executive">
+                    Executive
+                  </option>
+
+                  <option value="Analyst">
+                    Analyst
+                  </option>
+
+                  <option value="Officer">
+                    Project Officer
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            {/* ERROR */}
+
+            {error && (
+
+              <div
+                style={{
+                  marginBottom: "12px",
+                  padding: "9px 11px",
+                  borderRadius: "7px",
+                  border:
+                    "1px solid #f0caca",
+                  background: "#fff5f5",
+                  color: "#b74d4d",
+                  fontSize: "9px",
+                  lineHeight: "1.5",
+                }}
+              >
+                {error}
+              </div>
+
+            )}
+
+
+            {/* LOGIN BUTTON */}
+
+            <button
+              type="submit"
+              className="login-button"
+            >
+
+              <span>
+                Sign in
+              </span>
+
+              <ArrowRight size={17} />
+
             </button>
 
           </form>
 
-          <div className="demo-divider">
-            <span>OR USE DEMO ACCOUNT</span>
+
+          {/* DEMO ACCESS */}
+
+          <div className="login-demo">
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginBottom: "9px",
+              }}
+            >
+
+              <span
+                style={{
+                  flex: 1,
+                  height: "1px",
+                  background: "#dfe5ec",
+                }}
+              />
+
+              <small>
+                OR
+              </small>
+
+              <span
+                style={{
+                  flex: 1,
+                  height: "1px",
+                  background: "#dfe5ec",
+                }}
+              />
+
+            </div>
+
+
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              style={{
+                width: "100%",
+                minHeight: "34px",
+                border: "1px solid #d5dfeb",
+                borderRadius: "6px",
+                background: "white",
+                color: "#3975c8",
+                fontSize: "9px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              Continue with Demo Access
+            </button>
+
+            <div
+              style={{
+                marginTop: "7px",
+              }}
+            >
+              Prototype access — no real
+              government credentials are
+              required.
+            </div>
+
           </div>
 
-          <div className="demo-buttons">
 
-            <button onClick={() => demoLogin("Executive")}>
-              <strong>Executive</strong>
-              <span>Portfolio overview</span>
-            </button>
+          {/* SECURITY */}
 
-            <button onClick={() => demoLogin("Analyst")}>
-              <strong>Analyst</strong>
-              <span>Data & models</span>
-            </button>
+          <div className="login-security">
 
-            <button onClick={() => demoLogin("Officer")}>
-              <strong>Officer</strong>
-              <span>Project monitoring</span>
-            </button>
+            <ShieldCheck size={15} />
+
+            <span>
+              Secure role-based monitoring
+              environment
+            </span>
 
           </div>
-
-          <p className="prototype-note">
-            Demo accounts are for prototype demonstration only.
-          </p>
 
         </div>
 
-      </div>
+      </section>
 
     </div>
   );
 }
+
 
 export default Login;
