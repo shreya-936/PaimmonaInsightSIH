@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
-import "./dashboard.css";
+import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
 
 import {
